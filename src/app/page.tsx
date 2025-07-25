@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import type { AvatarTraits } from '@/lib/types';
 import { INITIAL_TRAITS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Wallet, LogOut, Save, UploadCloud, Loader2 } from 'lucide-react';
+import { Sparkles, Wallet, LogOut, UploadCloud, Loader2, Copy, CopyCheck } from 'lucide-react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { saveAvatar } from '@/services/firestore';
@@ -26,6 +26,8 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<AvatarTraits[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [isJsonCopied, setIsJsonCopied] = useState(false);
+  const [isJsxCopied, setIsJsxCopied] = useState(false);
   const { toast } = useToast();
 
   const { address, isConnected } = useAccount()
@@ -60,6 +62,19 @@ export default function Home() {
       title: 'Copied to Clipboard',
       description: 'Avatar configuration JSON has been copied.',
     });
+    setIsJsonCopied(true);
+    setTimeout(() => setIsJsonCopied(false), 2000);
+  };
+  
+  const handleCopyJsx = () => {
+    const jsxString = `<AvatarViewer traits={${JSON.stringify(traits, null, 2)}} />`;
+    navigator.clipboard.writeText(jsxString);
+    toast({
+      title: 'Copied to Clipboard',
+      description: 'Avatar viewer JSX component has been copied.',
+    });
+    setIsJsxCopied(true);
+    setTimeout(() => setIsJsxCopied(false), 2000);
   };
 
   const handleUploadAndSave = async () => {
@@ -189,8 +204,15 @@ export default function Home() {
             <div className="w-full max-w-xl aspect-square">
               <AvatarViewer traits={traits} />
             </div>
-            <div className="flex flex-wrap gap-4">
-              <Button onClick={handleCopyJson}>Copy JSON</Button>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <Button onClick={handleCopyJson}>
+                {isJsonCopied ? <CopyCheck className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                {isJsonCopied ? 'Copied!' : 'Copy JSON'}
+              </Button>
+               <Button onClick={handleCopyJsx}>
+                {isJsxCopied ? <CopyCheck className="mr-2 h-4 w-4" /> : <Copy className="mr-2 h-4 w-4" />}
+                {isJsxCopied ? 'Copied!' : 'Copy JSX'}
+              </Button>
                <Button onClick={handleUploadAndSave} disabled={isSaving || !isConnected}>
                 <UploadCloud className="mr-2 h-4 w-4" />
                 {isSaving ? 'Saving...' : 'Save to IPFS & Firebase'}
