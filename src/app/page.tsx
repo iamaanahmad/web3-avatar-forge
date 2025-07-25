@@ -14,11 +14,12 @@ import { Button } from '@/components/ui/button';
 import type { AvatarTraits } from '@/lib/types';
 import { INITIAL_TRAITS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Wallet, LogOut, UploadCloud, Loader2, Copy, CopyCheck } from 'lucide-react';
+import { Sparkles, Wallet, LogOut, UploadCloud, Loader2, Copy, CopyCheck, MessageSquareQuote } from 'lucide-react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { saveAvatar } from '@/services/firestore';
 import { useMintAvatar } from '@/hooks/use-mint-avatar';
+import { logCopyCode, logMintEvent } from '@/services/analytics';
 
 
 export default function Home() {
@@ -58,6 +59,7 @@ export default function Home() {
 
   const handleCopyJson = () => {
     navigator.clipboard.writeText(JSON.stringify(traits, null, 2));
+    logCopyCode('json');
     toast({
       title: 'Copied to Clipboard',
       description: 'Avatar configuration JSON has been copied.',
@@ -69,6 +71,7 @@ export default function Home() {
   const handleCopyJsx = () => {
     const jsxString = `<AvatarViewer traits={${JSON.stringify(traits, null, 2)}} />`;
     navigator.clipboard.writeText(jsxString);
+    logCopyCode('jsx');
     toast({
       title: 'Copied to Clipboard',
       description: 'Avatar viewer JSX component has been copied.',
@@ -138,6 +141,7 @@ export default function Home() {
     const ipfsCid = await handleUploadAndSave();
 
     if (ipfsCid && address) {
+      logMintEvent('mint_initiated', { wallet: address, ipfsCid });
        toast({
         title: 'Ready to Mint',
         description: 'Please confirm the transaction in your wallet.',
@@ -148,19 +152,21 @@ export default function Home() {
   
   React.useEffect(() => {
     if(isMinted) {
+       logMintEvent('mint_success', { wallet: address });
        toast({
         title: 'Minting Successful!',
         description: 'Your avatar has been minted as an NFT.',
       });
     }
     if (mintError) {
+       logMintEvent('mint_failure', { wallet: address, error: mintError.message });
        toast({
         variant: 'destructive',
         title: 'Minting Failed',
         description: mintError.message || 'An unknown error occurred.',
       });
     }
-  }, [isMinted, mintError, toast]);
+  }, [isMinted, mintError, toast, address]);
 
 
   return (
@@ -171,20 +177,26 @@ export default function Home() {
             <Sparkles className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-bold text-foreground">Web3 Avatar Forge</h1>
           </div>
-          {isConnected ? (
-            <div className="flex items-center gap-4">
-              <p className="text-sm font-mono">{`${address?.substring(0,6)}...${address?.substring(address.length - 4)}`}</p>
-              <Button variant="outline" size="sm" onClick={() => disconnect()}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Disconnect
-              </Button>
-            </div>
-          ) : (
-             <Button variant="outline" onClick={() => connect({ connector: injected() })}>
-              <Wallet className="mr-2 h-4 w-4" />
-              Connect Wallet
+          <div className='flex items-center gap-4'>
+            <Button variant="ghost" size="sm" onClick={() => window.open('https://github.com/FirebaseExtended/codelabs-genkit-nextjs-web3-avatar/issues/new', '_blank')}>
+                <MessageSquareQuote className="mr-2 h-4 w-4" />
+                Feedback
             </Button>
-          )}
+            {isConnected ? (
+              <div className="flex items-center gap-4">
+                <p className="text-sm font-mono">{`${address?.substring(0,6)}...${address?.substring(address.length - 4)}`}</p>
+                <Button variant="outline" size="sm" onClick={() => disconnect()}>
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Disconnect
+                </Button>
+              </div>
+            ) : (
+              <Button variant="outline" onClick={() => connect({ connector: injected() })}>
+                <Wallet className="mr-2 h-4 w-4" />
+                Connect Wallet
+              </Button>
+            )}
+          </div>
         </div>
       </header>
 
