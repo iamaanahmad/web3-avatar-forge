@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import Image from 'next/image';
 import {
   suggestAvatarVariations,
   type SuggestAvatarVariationsInput,
@@ -186,7 +187,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
           <div className="flex items-center gap-2">
-            <Sparkles className="h-6 w-6 text-primary" />
+            <Image src="https://i.ibb.co/jrpP45B/BCO-3d4f1176-0dce-46c0-8fae-27b0347d5053.png" alt="Web3 Avatar Forge Logo" width={32} height={32} className="rounded-md" />
             <h1 className="text-xl font-bold text-foreground">Web3 Avatar Forge</h1>
           </div>
           <div className='flex items-center gap-4'>
