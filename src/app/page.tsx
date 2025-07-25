@@ -14,10 +14,11 @@ import { Button } from '@/components/ui/button';
 import type { AvatarTraits } from '@/lib/types';
 import { INITIAL_TRAITS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Wallet, LogOut, Save, UploadCloud } from 'lucide-react';
+import { Sparkles, Wallet, LogOut, Save, UploadCloud, Loader2 } from 'lucide-react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { saveAvatar } from '@/services/firestore';
+import { useMintAvatar } from '@/hooks/use-mint-avatar';
 
 
 export default function Home() {
@@ -30,6 +31,9 @@ export default function Home() {
   const { address, isConnected } = useAccount()
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
+
+  const { mint, isPending: isMinting, isSuccess: isMinted, error: mintError } = useMintAvatar();
+
 
   const handleSuggest = async () => {
     setIsLoading(true);
@@ -96,6 +100,7 @@ export default function Home() {
         title: 'Avatar Saved',
         description: 'Your avatar configuration has been saved to Firebase.',
       });
+      return ipfsCid;
 
     } catch (error) {
       console.error('Error during save process:', error);
@@ -104,10 +109,43 @@ export default function Home() {
         title: 'Error',
         description: 'Could not save avatar. Please try again.',
       });
+      return null;
     } finally {
       setIsSaving(false);
     }
   }
+
+  const handleMint = async () => {
+    toast({
+      title: 'Preparing to Mint',
+      description: 'Saving metadata to IPFS first...',
+    });
+    const ipfsCid = await handleUploadAndSave();
+
+    if (ipfsCid && address) {
+       toast({
+        title: 'Ready to Mint',
+        description: 'Please confirm the transaction in your wallet.',
+      });
+      await mint({ recipient: address, tokenURI: `ipfs://${ipfsCid}` });
+    }
+  }
+  
+  React.useEffect(() => {
+    if(isMinted) {
+       toast({
+        title: 'Minting Successful!',
+        description: 'Your avatar has been minted as an NFT.',
+      });
+    }
+    if (mintError) {
+       toast({
+        variant: 'destructive',
+        title: 'Minting Failed',
+        description: mintError.message || 'An unknown error occurred.',
+      });
+    }
+  }, [isMinted, mintError, toast]);
 
 
   return (
@@ -157,10 +195,16 @@ export default function Home() {
                 <UploadCloud className="mr-2 h-4 w-4" />
                 {isSaving ? 'Saving...' : 'Save to IPFS & Firebase'}
               </Button>
-              <Button variant="secondary" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled>
-                Mint Avatar
+              <Button variant="secondary" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled={isMinting || !isConnected} onClick={handleMint}>
+                 {isMinting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isMinting ? 'Minting...' : 'Mint Avatar'}
               </Button>
             </div>
+             {isMinted && (
+              <p className="text-green-500">
+                Success! Your new NFT has been minted.
+              </p>
+            )}
           </div>
         </div>
       </main>
