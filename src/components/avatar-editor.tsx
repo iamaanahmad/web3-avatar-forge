@@ -57,6 +57,7 @@ export function AvatarEditor({ traits, setTraits, suggestions, onSuggest, isLoad
                     <button
                       key={option.id}
                       onClick={() => handleTraitSelect(id, option.id)}
+                      aria-label={`Select ${option.label}`}
                       className={cn(
                         "aspect-square rounded-lg border-2 flex items-center justify-center transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background",
                         traits[id] === option.id ? 'border-primary shadow-lg' : 'border-border hover:border-primary/50'
@@ -93,6 +94,7 @@ export function AvatarEditor({ traits, setTraits, suggestions, onSuggest, isLoad
                 <button
                   key={index}
                   onClick={() => setTraits(suggestion)}
+                  aria-label={`Select suggestion ${index + 1}`}
                   className="w-full aspect-square rounded-md border-2 border-transparent hover:border-accent transition-all focus:outline-none focus:ring-2 focus:ring-ring"
                 >
                   <div className="relative w-full h-full bg-muted rounded-md overflow-hidden">
