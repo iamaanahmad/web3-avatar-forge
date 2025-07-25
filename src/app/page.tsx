@@ -7,13 +7,14 @@ import {
   type SuggestAvatarVariationsInput,
   type SuggestAvatarVariationsOutput,
 } from '@/ai/flows/suggest-avatar-variations';
+import { uploadToIpfs, type UploadToIpfsInput, type UploadToIpfsOutput } from '@/ai/flows/upload-to-ipfs';
 import { AvatarEditor } from '@/components/avatar-editor';
 import { AvatarViewer } from '@/components/avatar-viewer';
 import { Button } from '@/components/ui/button';
 import type { AvatarTraits } from '@/lib/types';
 import { INITIAL_TRAITS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Wallet, LogOut, Save } from 'lucide-react';
+import { Sparkles, Wallet, LogOut, Save, UploadCloud } from 'lucide-react';
 import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { saveAvatar } from '@/services/firestore';
@@ -57,7 +58,7 @@ export default function Home() {
     });
   };
 
-  const handleSave = async () => {
+  const handleUploadAndSave = async () => {
     if (!isConnected || !address) {
       toast({
         variant: 'destructive',
@@ -67,19 +68,37 @@ export default function Home() {
       return;
     }
     setIsSaving(true);
+    let ipfsCid = '';
+    
     try {
+      // 1. Upload to IPFS (simulated)
+      toast({
+        title: 'Uploading to IPFS...',
+        description: 'Please wait while we upload your avatar metadata.',
+      });
+      const ipfsInput: UploadToIpfsInput = traits;
+      const ipfsResult: UploadToIpfsOutput = await uploadToIpfs(ipfsInput);
+      ipfsCid = ipfsResult.ipfsCid;
+
+      toast({
+        title: 'Upload Successful!',
+        description: `Your avatar metadata is on IPFS with CID: ${ipfsCid.substring(0, 10)}...`,
+      });
+
+      // 2. Save to Firestore
       const metadata = {
         wallet: address,
         traits,
-        ipfs_cid: '', // Placeholder for now
+        ipfs_cid: ipfsCid,
       }
       await saveAvatar(metadata);
       toast({
         title: 'Avatar Saved',
         description: 'Your avatar configuration has been saved to Firebase.',
       });
+
     } catch (error) {
-      console.error('Error saving avatar:', error);
+      console.error('Error during save process:', error);
       toast({
         variant: 'destructive',
         title: 'Error',
@@ -134,11 +153,10 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap gap-4">
               <Button onClick={handleCopyJson}>Copy JSON</Button>
-               <Button onClick={handleSave} disabled={isSaving || !isConnected}>
-                <Save className="mr-2 h-4 w-4" />
-                {isSaving ? 'Saving...' : 'Save to Firebase'}
+               <Button onClick={handleUploadAndSave} disabled={isSaving || !isConnected}>
+                <UploadCloud className="mr-2 h-4 w-4" />
+                {isSaving ? 'Saving...' : 'Save to IPFS & Firebase'}
               </Button>
-              <Button variant="outline" disabled>Save to IPFS</Button>
               <Button variant="secondary" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled>
                 Mint Avatar
               </Button>
