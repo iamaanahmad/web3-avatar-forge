@@ -190,7 +190,7 @@ export default function Home() {
             <Image src="https://i.ibb.co/23rpP45B/BCO-3d4f1176-0dce-46c0-8fae-27b0347d5053.png" alt="Web3 Avatar Forge Logo" width={120} height={50} className="rounded-md" />
           </div>
           <div className='flex items-center gap-4'>
-            <Button variant="ghost" size="sm" onClick={() => window.open('https://github.com/FirebaseExtended/codelabs-genkit-nextjs-web3-avatar/issues/new', '_blank')}>
+            <Button variant="ghost" size="sm" onClick={() => window.open('https://github.com/iamaanahmad/web3-avatar-forge/issues/new', '_blank')}>
                 <MessageSquareQuote className="mr-2 h-4 w-4" />
                 Feedback
             </Button>

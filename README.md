@@ -30,7 +30,7 @@ This project serves as a comprehensive demo and a boilerplate for developers loo
 
 1.  **Clone the repository:**
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/iamaanahmad/web3-avatar-forge.git
     cd web3-avatar-forge
     ```
 
@@ -127,3 +127,15 @@ export default UserProfileCard;
 ```
 
 This modular approach allows for the creation of interoperable digital identities that can be displayed consistently across different applications in the Web3 ecosystem.
+
+## Contributing
+
+This project is open-source and we welcome contributions! Whether you're a developer, designer, or just have ideas, feel free to get involved.
+
+-   **Report Bugs**: If you find a bug, please [open an issue](https://github.com/iamaanahmad/web3-avatar-forge/issues).
+-   **Suggest Features**: Have an idea for a new feature or improvement? [Open an issue](https://github.com/iamaanahmad/web3-avatar-forge/issues) to start a discussion.
+-   **Submit Pull Requests**: We're happy to review and merge pull requests that improve the project.
+
+### Roadmap
+
+We have many exciting features planned, such as a trait pack marketplace, deeper Web3 integrations, and more. We will be using GitHub Issues to track our roadmap and welcome community input.
