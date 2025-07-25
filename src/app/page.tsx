@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import {
   suggestAvatarVariations,
   type SuggestAvatarVariationsInput,
@@ -30,6 +30,7 @@ export default function Home() {
   const [isJsonCopied, setIsJsonCopied] = useState(false);
   const [isJsxCopied, setIsJsxCopied] = useState(false);
   const { toast } = useToast();
+  const prevTraitsRef = useRef<AvatarTraits>(traits);
 
   const { address, isConnected } = useAccount()
   const { connect } = useConnect()
@@ -150,7 +151,7 @@ export default function Home() {
     }
   }
   
-  React.useEffect(() => {
+  useEffect(() => {
     if(isMinted) {
        logMintEvent('mint_success', { wallet: address, transactionHash: mintData?.hash });
        toast({
@@ -167,6 +168,17 @@ export default function Home() {
       });
     }
   }, [isMinted, mintError, toast, address, mintData]);
+
+  useEffect(() => {
+    const prevTraits = prevTraitsRef.current;
+    Object.keys(traits).forEach(key => {
+        const traitKey = key as keyof AvatarTraits;
+        if (prevTraits[traitKey] !== traits[traitKey]) {
+            logTraitSelection(traitKey, traits[traitKey]);
+        }
+    });
+    prevTraitsRef.current = traits;
+  }, [traits]);
 
 
   return (
@@ -205,28 +217,7 @@ export default function Home() {
           <div className="lg:col-span-1 h-full flex flex-col gap-8">
              <AvatarEditor
                 traits={traits}
-                setTraits={(newTraits) => {
-                  if(typeof newTraits === 'function') {
-                    setTraits(prev => {
-                      const updated = newTraits(prev);
-                      Object.keys(updated).forEach(key => {
-                        const traitKey = key as keyof AvatarTraits;
-                        if(prev[traitKey] !== updated[traitKey]) {
-                            logTraitSelection(traitKey, updated[traitKey]);
-                        }
-                      });
-                      return updated;
-                    })
-                  } else {
-                    Object.keys(newTraits).forEach(key => {
-                        const traitKey = key as keyof AvatarTraits;
-                        if(traits[traitKey] !== newTraits[traitKey]) {
-                            logTraitSelection(traitKey, newTraits[traitKey]);
-                        }
-                    });
-                    setTraits(newTraits);
-                  }
-                }}
+                setTraits={setTraits}
                 suggestions={suggestions}
                 onSuggest={handleSuggest}
                 isLoading={isLoading}
