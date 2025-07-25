@@ -98,7 +98,7 @@ export function AvatarEditor({ traits, setTraits, suggestions, onSuggest, isLoad
                   key={index}
                   onClick={() => setTraits(suggestion)}
                   aria-label={`Select suggestion ${index + 1}`}
-                  className="w-full aspect-square rounded-md border-2 border-transparent hover:border-accent transition-all focus:outline-none focus:ring-2 focus:ring-ring"
+                  className="w-full aspect-square rounded-md border-2 border-transparent hover:border-accent transition-all focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-background"
                 >
                   <div className="relative w-full h-full bg-muted rounded-md overflow-hidden">
                     <div className="absolute inset-0" style={{ backgroundColor: BACKGROUND_OPTIONS.find(bg => bg.id === suggestion.background)?.color }}></div>
