@@ -187,7 +187,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-14 max-w-screen-2xl items-center justify-between">
           <div className="flex items-center gap-2">
-            <Image src="https://i.ibb.co/23rpP45B/BCO-3d4f1176-0dce-46c0-8fae-27b0347d5053.png" alt="Web3 Avatar Forge Logo" width={40} height={40} className="rounded-md" />
+            <Image src="https://i.ibb.co/23rpP45B/BCO-3d4f1176-0dce-46c0-8fae-27b0347d5053.png" alt="Web3 Avatar Forge Logo" width={120} height={50} className="rounded-md" />
           </div>
           <div className='flex items-center gap-4'>
             <Button variant="ghost" size="sm" onClick={() => window.open('https://github.com/FirebaseExtended/codelabs-genkit-nextjs-web3-avatar/issues/new', '_blank')}>
