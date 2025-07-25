@@ -1,24 +1,49 @@
-# Web3 Avatar Forge
 
-Welcome to the Web3 Avatar Forge! This application is a powerful playground and starting point for creating customizable, trait-based SVG avatars, integrating with Web3 wallets, and minting them as NFTs. It's built with Next.js, React, ShadCN UI, Tailwind CSS, and Genkit.
+<div align="center">
+  <img src="https://i.ibb.co/23rpP45B/BCO-3d4f1176-0dce-46c0-8fae-27b0347d5053.png" alt="Web3 Avatar Forge Logo" width="150" />
+  <h1>Web3 Avatar Forge</h1>
+  <p><strong>Create, customize, and mint your unique Web3 identity.</strong></p>
+  <p>A developer-friendly playground for trait-based SVG avatars, AI-powered suggestions, and simulated NFT minting.</p>
+</div>
 
-This project serves as a comprehensive demo and a boilerplate for developers looking to build applications with interoperable, user-owned digital identities.
+<div align="center">
+  <a href="https://github.com/iamaanahmad/web3-avatar-forge/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/iamaanahmad/web3-avatar-forge?style=for-the-badge" alt="License">
+  </a>
+  <a href="https://github.com/iamaanahmad/web3-avatar-forge/issues">
+    <img src="https://img.shields.io/github/issues/iamaanahmad/web3-avatar-forge?style=for-the-badge" alt="Issues">
+  </a>
+  <a href="https://github.com/iamaanahmad/web3-avatar-forge/pulls">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=for-the-badge" alt="PRs Welcome">
+  </a>
+   <a href="https://github.com/iamaanahmad/web3-avatar-forge/stargazers">
+    <img src="https://img.shields.io/github/stars/iamaanahmad/web3-avatar-forge?style=for-the-badge" alt="Stars">
+  </a>
+</div>
 
-## Features
+## ✨ Features
 
--   **🎨 Avatar Builder UI**: A clean, intuitive, and responsive interface for customizing avatars based on various traits like hair, eyes, accessories, and background.
--   **🤖 AI-Powered Suggestions**: Utilizes Genkit to connect to the Gemini API, providing users with creative avatar variations based on their current selections.
+-   **🎨 Avatar Builder UI**: A clean, intuitive, and responsive interface for customizing avatars based on various traits.
+-   **🤖 AI-Powered Suggestions**: Utilizes Genkit to connect to the Gemini API, providing creative avatar variations.
 -   **🔗 Web3 Integration**: Seamless wallet connection using `wagmi`, supporting MetaMask and other wallets.
--   **💾 Decentralized & Centralized Storage**:
-    -   Saves avatar metadata to a Firebase Firestore database.
-    -   Includes a (simulated) flow to upload metadata to IPFS, preparing it for decentralized storage.
--   **🖼️ NFT Minting Flow**: A complete, (simulated) end-to-end flow for minting the configured avatar as an ERC-721 NFT on the Sepolia testnet.
+-   **💾 Simulated Decentralized Storage**: Includes a simulated flow to upload metadata to IPFS, preparing it for decentralized storage.
+-   **🖼️ Simulated NFT Minting**: A complete, simulated end-to-end flow for minting the configured avatar as an ERC-721 NFT.
 -   **🚀 Developer Playground**:
     -   **Copy JSON**: Instantly copy the avatar's trait configuration as a JSON object.
-    -   **Copy JSX**: Copy a pre-formatted React `<AvatarViewer />` component snippet to easily integrate the avatar into other dApps.
--   ** modular & Reusable Components**: Built with `<AvatarEditor />` and `<AvatarViewer />` components that can be adapted for other projects.
+    -   **Copy JSX**: Copy a pre-formatted React `<AvatarViewer />` component snippet to easily integrate the avatar.
 
-## Getting Started
+## 🛠️ Tech Stack
+
+<div align="center">
+  <a href="https://nextjs.org/" target="_blank"><img src="https://img.shields.io/badge/Next-black?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js"></a>
+  <a href="https://react.dev/" target="_blank"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React"></a>
+  <a href="https://tailwindcss.com/" target="_blank"><img src="https://img.shields.io/badge/tailwindcss-%2338B2AC.svg?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS"></a>
+  <a href="https://firebase.google.com/" target="_blank"><img src="https://img.shields.io/badge/Firebase-FFCA28?style=for-the-badge&logo=firebase&logoColor=black" alt="Firebase"></a>
+  <a href="https://ai.google.dev/edge/genkit" target="_blank"><img src="https://img.shields.io/badge/Genkit-5A34BE?style=for-the-badge&logo=google-cloud&logoColor=white" alt="Genkit"></a>
+  <a href="https://wagmi.sh/" target="_blank"><img src="https://img.shields.io/badge/wagmi-black?style=for-the-badge&logo=ethereum&logoColor=white" alt="Wagmi"></a>
+</div>
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
@@ -51,39 +76,7 @@ This project serves as a comprehensive demo and a boilerplate for developers loo
     npm run genkit:watch
     ```
 
-## Avatar Trait System
-
-The avatar customization is based on a simple and extensible trait system.
-
-### Metadata Schema
-
-Each avatar's configuration is stored using the following JSON structure. This is the object that gets saved to Firestore and uploaded to IPFS.
-
-```json
-{
-  "wallet": "0x123...",
-  "traits": {
-    "hair": "hair1",
-    "eyes": "eyes1",
-    "accessories": "none",
-    "background": "bg1"
-  },
-  "ipfs_cid": "Qm..."
-}
-```
-
--   `wallet`: The blockchain address of the avatar's owner.
--   `traits`: An object containing the selected `id` for each trait category.
--   `ipfs_cid`: The Content Identifier for the metadata file on IPFS.
-
-### Trait Definitions
-
-The available options for each trait are defined in `src/lib/constants.ts`. You can easily extend this by:
-
-1.  Creating a new SVG component for your trait in `src/components/icons.tsx`.
-2.  Adding a new entry to the appropriate options array in `src/lib/constants.ts`.
-
-## How to Integrate the Avatar into Your dApp
+## 🧩 How to Integrate the Avatar into Your dApp
 
 One of the key features of this project is the ability to easily reuse the generated avatars.
 
@@ -126,9 +119,7 @@ const UserProfileCard = ({ userAddress, avatarTraits }) => {
 export default UserProfileCard;
 ```
 
-This modular approach allows for the creation of interoperable digital identities that can be displayed consistently across different applications in the Web3 ecosystem.
-
-## Contributing
+## 🤝 Contributing
 
 This project is open-source and we welcome contributions! Whether you're a developer, designer, or just have ideas, feel free to get involved.
 
@@ -136,6 +127,10 @@ This project is open-source and we welcome contributions! Whether you're a devel
 -   **Suggest Features**: Have an idea for a new feature or improvement? [Open an issue](https://github.com/iamaanahmad/web3-avatar-forge/issues) to start a discussion.
 -   **Submit Pull Requests**: We're happy to review and merge pull requests that improve the project.
 
-### Roadmap
+## ❤️ Contributors
 
-We have many exciting features planned, such as a trait pack marketplace, deeper Web3 integrations, and more. We will be using GitHub Issues to track our roadmap and welcome community input.
+A huge thanks to all the people who have contributed to this project.
+
+<a href="https://github.com/iamaanahmad/web3-avatar-forge/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=iamaanahmad/web3-avatar-forge" />
+</a>
