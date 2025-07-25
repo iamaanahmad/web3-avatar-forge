@@ -12,6 +12,8 @@ import { Loader2, Palette, Shirt, Eye, PersonStanding, Sparkles } from 'lucide-r
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { Skeleton } from './ui/skeleton';
+import { logTraitSelection } from '@/services/analytics';
+
 
 interface AvatarEditorProps {
   traits: AvatarTraits;
@@ -32,6 +34,7 @@ export function AvatarEditor({ traits, setTraits, suggestions, onSuggest, isLoad
 
   const handleTraitSelect = (category: TraitCategory, value: string) => {
     setTraits(prev => ({ ...prev, [category]: value }));
+    logTraitSelection(category, value);
   };
 
   return (
