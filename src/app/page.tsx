@@ -19,7 +19,7 @@ import { useAccount, useConnect, useDisconnect } from 'wagmi';
 import { injected } from 'wagmi/connectors'
 import { saveAvatar } from '@/services/firestore';
 import { useMintAvatar } from '@/hooks/use-mint-avatar';
-import { logCopyCode, logMintEvent } from '@/services/analytics';
+import { logCopyCode, logMintEvent, logTraitSelection } from '@/services/analytics';
 
 
 export default function Home() {
@@ -35,7 +35,7 @@ export default function Home() {
   const { connect } = useConnect()
   const { disconnect } = useDisconnect()
 
-  const { mint, isPending: isMinting, isSuccess: isMinted, error: mintError } = useMintAvatar();
+  const { mint, isPending: isMinting, isSuccess: isMinted, error: mintError, data: mintData } = useMintAvatar();
 
 
   const handleSuggest = async () => {
@@ -96,7 +96,7 @@ export default function Home() {
       // 1. Upload to IPFS (simulated)
       toast({
         title: 'Uploading to IPFS...',
-        description: 'Please wait while we upload your avatar metadata.',
+        description: 'Please wait while we upload your avatar metadata. (Simulated)',
       });
       const ipfsInput: UploadToIpfsInput = traits;
       const ipfsResult: UploadToIpfsOutput = await uploadToIpfs(ipfsInput);
@@ -104,7 +104,7 @@ export default function Home() {
 
       toast({
         title: 'Upload Successful!',
-        description: `Your avatar metadata is on IPFS with CID: ${ipfsCid.substring(0, 10)}...`,
+        description: `(Simulated) IPFS CID: ${ipfsCid.substring(0, 10)}...`,
       });
 
       // 2. Save to Firestore
@@ -143,7 +143,7 @@ export default function Home() {
     if (ipfsCid && address) {
       logMintEvent('mint_initiated', { wallet: address, ipfsCid });
        toast({
-        title: 'Ready to Mint',
+        title: 'Ready to Mint (Simulated)',
         description: 'Please confirm the transaction in your wallet.',
       });
       await mint({ recipient: address, tokenURI: `ipfs://${ipfsCid}` });
@@ -152,21 +152,21 @@ export default function Home() {
   
   React.useEffect(() => {
     if(isMinted) {
-       logMintEvent('mint_success', { wallet: address });
+       logMintEvent('mint_success', { wallet: address, transactionHash: mintData?.hash });
        toast({
-        title: 'Minting Successful!',
-        description: 'Your avatar has been minted as an NFT.',
+        title: 'Minting Successful! (Simulated)',
+        description: `Your avatar has been minted. Tx Hash: ${mintData?.hash.substring(0, 10)}...`,
       });
     }
     if (mintError) {
        logMintEvent('mint_failure', { wallet: address, error: mintError.message });
        toast({
         variant: 'destructive',
-        title: 'Minting Failed',
+        title: 'Minting Failed (Simulated)',
         description: mintError.message || 'An unknown error occurred.',
       });
     }
-  }, [isMinted, mintError, toast, address]);
+  }, [isMinted, mintError, toast, address, mintData]);
 
 
   return (
@@ -205,7 +205,28 @@ export default function Home() {
           <div className="lg:col-span-1 h-full flex flex-col gap-8">
              <AvatarEditor
                 traits={traits}
-                setTraits={setTraits}
+                setTraits={(newTraits) => {
+                  if(typeof newTraits === 'function') {
+                    setTraits(prev => {
+                      const updated = newTraits(prev);
+                      Object.keys(updated).forEach(key => {
+                        const traitKey = key as keyof AvatarTraits;
+                        if(prev[traitKey] !== updated[traitKey]) {
+                            logTraitSelection(traitKey, updated[traitKey]);
+                        }
+                      });
+                      return updated;
+                    })
+                  } else {
+                    Object.keys(newTraits).forEach(key => {
+                        const traitKey = key as keyof AvatarTraits;
+                        if(traits[traitKey] !== newTraits[traitKey]) {
+                            logTraitSelection(traitKey, newTraits[traitKey]);
+                        }
+                    });
+                    setTraits(newTraits);
+                  }
+                }}
                 suggestions={suggestions}
                 onSuggest={handleSuggest}
                 isLoading={isLoading}
@@ -234,9 +255,9 @@ export default function Home() {
                 {isMinting ? 'Minting...' : 'Mint Avatar'}
               </Button>
             </div>
-             {isMinted && (
-              <p className="text-green-500">
-                Success! Your new NFT has been minted.
+             {isMinted && mintData?.hash && (
+              <p className="text-green-500 text-sm mt-2">
+                Success! View simulated transaction: <code className='font-mono bg-muted p-1 rounded-sm'>{mintData.hash.substring(0,12)}...</code>
               </p>
             )}
           </div>
