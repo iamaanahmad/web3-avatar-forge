@@ -13,13 +13,22 @@ import { Button } from '@/components/ui/button';
 import type { AvatarTraits } from '@/lib/types';
 import { INITIAL_TRAITS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { Sparkles, Wallet } from 'lucide-react';
+import { Sparkles, Wallet, LogOut, Save } from 'lucide-react';
+import { useAccount, useConnect, useDisconnect } from 'wagmi';
+import { injected } from 'wagmi/connectors'
+import { saveAvatar } from '@/services/firestore';
+
 
 export default function Home() {
   const [traits, setTraits] = useState<AvatarTraits>(INITIAL_TRAITS);
   const [suggestions, setSuggestions] = useState<AvatarTraits[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+
+  const { address, isConnected } = useAccount()
+  const { connect } = useConnect()
+  const { disconnect } = useDisconnect()
 
   const handleSuggest = async () => {
     setIsLoading(true);
@@ -48,6 +57,40 @@ export default function Home() {
     });
   };
 
+  const handleSave = async () => {
+    if (!isConnected || !address) {
+      toast({
+        variant: 'destructive',
+        title: 'Not Connected',
+        description: 'Please connect your wallet to save your avatar.',
+      });
+      return;
+    }
+    setIsSaving(true);
+    try {
+      const metadata = {
+        wallet: address,
+        traits,
+        ipfs_cid: '', // Placeholder for now
+      }
+      await saveAvatar(metadata);
+      toast({
+        title: 'Avatar Saved',
+        description: 'Your avatar configuration has been saved to Firebase.',
+      });
+    } catch (error) {
+      console.error('Error saving avatar:', error);
+      toast({
+        variant: 'destructive',
+        title: 'Error',
+        description: 'Could not save avatar. Please try again.',
+      });
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+
   return (
     <div className="flex flex-col min-h-screen">
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -56,10 +99,20 @@ export default function Home() {
             <Sparkles className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-bold text-foreground">Web3 Avatar Forge</h1>
           </div>
-          <Button variant="outline">
-            <Wallet className="mr-2 h-4 w-4" />
-            Connect Wallet
-          </Button>
+          {isConnected ? (
+            <div className="flex items-center gap-4">
+              <p className="text-sm font-mono">{`${address?.substring(0,6)}...${address?.substring(address.length - 4)}`}</p>
+              <Button variant="outline" size="sm" onClick={() => disconnect()}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Disconnect
+              </Button>
+            </div>
+          ) : (
+             <Button variant="outline" onClick={() => connect({ connector: injected() })}>
+              <Wallet className="mr-2 h-4 w-4" />
+              Connect Wallet
+            </Button>
+          )}
         </div>
       </header>
 
@@ -81,6 +134,10 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap gap-4">
               <Button onClick={handleCopyJson}>Copy JSON</Button>
+               <Button onClick={handleSave} disabled={isSaving || !isConnected}>
+                <Save className="mr-2 h-4 w-4" />
+                {isSaving ? 'Saving...' : 'Save to Firebase'}
+              </Button>
               <Button variant="outline" disabled>Save to IPFS</Button>
               <Button variant="secondary" className="bg-primary hover:bg-primary/90 text-primary-foreground" disabled>
                 Mint Avatar
