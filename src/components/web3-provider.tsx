@@ -1,4 +1,3 @@
-// Implemented Web3 Avatar Forge - Web3 Provider
 'use client';
 
 import * as React from 'react';

@@ -9,7 +9,7 @@ export interface AvatarTraits {
 
 export interface TraitOption {
     id: string;
-    label: string;
+    label:string;
     icon?: React.ElementType;
     color?: string;
 }
