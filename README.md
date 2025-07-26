@@ -45,6 +45,8 @@
 
 ## 🚀 Getting Started
 
+This repository contains the developer playground for the **Web3 Avatar Forge**. The reusable components are published as an NPM package. For instructions on using the package, see the [package README](https://www.npmjs.com/package/@ashqking/web3-avatar-forge).
+
 ### Prerequisites
 
 -   Node.js (v18 or later)
