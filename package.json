@@ -1,12 +1,30 @@
 {
-  "name": "nextn",
+  "name": "@iamaanahmad/web3-avatar-forge",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
+  "description": "A developer-friendly playground for trait-based SVG avatars, AI-powered suggestions, and simulated NFT minting.",
+  "author": "Amaan Ahmad",
+  "license": "MIT",
+  "keywords": [
+    "react",
+    "nextjs",
+    "web3",
+    "avatar",
+    "nft",
+    "genkit",
+    "ai"
+  ],
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "dev": "next dev --turbopack -p 9002",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",
     "genkit:watch": "genkit start -- tsx --watch src/ai/dev.ts",
-    "build": "next build",
+    "build": "tsup src/lib/index.ts --format cjs,esm --dts",
     "start": "next start",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
@@ -21,6 +39,7 @@
     "@radix-ui/react-checkbox": "^1.1.4",
     "@radix-ui/react-collapsible": "^1.1.11",
     "@radix-ui/react-dialog": "^1.1.6",
+    "react-hook-form": "^7.54.2",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-menubar": "^1.1.6",
@@ -52,7 +71,6 @@
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",
-    "react-hook-form": "^7.54.2",
     "recharts": "^2.15.1",
     "tailwind-merge": "^3.0.1",
     "tailwindcss-animate": "^1.0.7",
@@ -66,6 +84,7 @@
     "genkit-cli": "^1.14.1",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
-    "typescript": "^5"
+    "typescript": "^5",
+    "tsup": "^8.2.3"
   }
 }
